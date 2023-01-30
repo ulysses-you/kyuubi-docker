@@ -15,17 +15,17 @@
 # limitations under the License.
 #
 
-name: Build and publish Docker image
+name: Publish Docker image
 
 on:
-  push:
-    tags:
-      - *
+  pull_request:
+    branches:
+      - master
 
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
-    if: ${{ startsWith(github.repository, 'apache/') }}
+#    if: ${{ startsWith(github.repository, 'apache/') }}
     runs-on: ubuntu-22.04
     strategy:
        matrix:
@@ -51,8 +51,8 @@ jobs:
           wget -O kyuubi.tgz https://archive.apache.org/dist/kyuubi/kyuubi-$(cat release/release_version)/apache-kyuubi-$(cat release/release_version)-source.tgz
           tar -xvf kyuubi.tgz --strip-components=1
           ./build/dist ${{ matrix.opts }} -Dmaven.javadoc.skip=true -Dmaven.scaladoc.skip=true
-          docker build --tag apache/kyuubi:$(cat release/release_version)${{ matrix.suffix-name }} --file $(cat release/release_version)/*/Dockerfile .
+          docker build --tag ulyssesyou18/kyuubi:$(cat release/release_version)${{ matrix.suffix-name }} --file $(cat release/release_version)/*/Dockerfile .
       - name: Validate docker image
         run: docker images
       - name: Push Docker image
-        run: docker push apache/kyuubi:$(cat release/release_version)${{ matrix.suffix-name }}
+        run: docker push ulyssesyou18/kyuubi:$(cat release/release_version)${{ matrix.suffix-name }}
